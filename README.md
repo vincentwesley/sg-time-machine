@@ -15,7 +15,7 @@ A growing archive of Singapore's live open-data feeds (air quality, flood alerts
 | Dengue clusters | NEA | every 6 h |
 
 ## Limits
-- The archive starts on the first run date: <!-- START_DATE -->. There is no earlier history.
+- The archive starts on the first run date: 15 November 2026, 14:01 SGT. There is no earlier history.
 - GitHub scheduled runs can be delayed or skipped, so gaps happen.
 - Flood alerts change every couple of minutes upstream; short alerts between samples can be missed.
 - Carpark and taxi data come from v1 endpoints whose status is undocumented and could change or disappear.
