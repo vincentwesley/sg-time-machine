@@ -57,7 +57,7 @@ describe("normalisers (real fixtures)", () => {
   });
   it("flood (synthetic, documented schema): cancelled and malformed alerts dropped", () => {
     expect(normFlood(fix("flood-alert.synthetic.json"))).toEqual({
-      "2.49.0.0.702.2-BCM-3-X": { lon: 103.83555, lat: 1.30412, desc: "Flash flood at Orchard Rd. Please avoid the area. Issued 1330 hrs.", src: "2026-11-15T13:30:22+08:00" },
+      "2.49.0.0.702.2-BCM-3-X": { lon: 103.83555, lat: 1.30412, desc: "Flash flood at Orchard Rd. Please avoid the area. Issued 1330 hrs.", src: "2026-11-15T13:30:22+08:00", r: 1 },
     });
   });
 });

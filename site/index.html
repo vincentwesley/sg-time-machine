@@ -86,7 +86,7 @@
         <tbody>
           <tr><th scope="row">PSI</th><td>NEA</td><td>every 30 min</td><td>24-hour PSI for 5 regions</td></tr>
           <tr><th scope="row">PM2.5</th><td>NEA</td><td>every 30 min</td><td>1-hour PM2.5 for 5 regions</td></tr>
-          <tr><th scope="row">Flood alerts</th><td>PUB</td><td>every 30 min</td><td>Active alerts with location and description</td></tr>
+          <tr><th scope="row">Flood alerts</th><td>PUB</td><td>every 30 min</td><td>Active alerts with location, radius and description</td></tr>
           <tr><th scope="row">Carparks</th><td>HDB</td><td>hourly</td><td>Car lots free and total per carpark</td></tr>
           <tr><th scope="row">Taxis</th><td>LTA</td><td>hourly</td><td>Counts per 0.01&deg; grid square, not vehicles</td></tr>
           <tr><th scope="row">Dengue clusters</th><td>NEA</td><td>every 6 h</td><td>Cluster outlines and case counts</td></tr>
@@ -99,7 +99,7 @@
         <li>The archive starts on its first run. There is no earlier history.</li>
         <li>Scheduled runs can be late or skipped, so gaps happen. A feed with nothing for a day says so.</li>
         <li>Air-quality readings are drawn at the centre of each NEA region, not at a sensor.</li>
-        <li>Flood alerts can start and end between samples, and the alert radius is not archived, so each is drawn as a fixed-size marker.</li>
+        <li>Flood alerts can start and end between samples, and the alert radius is archived only from 15 Nov 2026 onward. Where it exists the alert is drawn at its real radius; earlier alerts are a fixed-size marker.</li>
         <li>Carpark and taxi data come from endpoints whose long-term status is undocumented.</li>
       </ul>
 

@@ -79,7 +79,7 @@ const map = new MlMap({
   fadeDuration: reduceMotion.matches ? 0 : 300,
 });
 // keep Singapore clear of the panel and timeline
-map.once("load", () => map.jumpTo({ padding: innerWidth < 960 ? { top: 170, bottom: 250, left: 0, right: 0 } : { top: 0, bottom: 170, left: 0, right: 360 } }));
+map.once("load", () => map.jumpTo({ padding: innerWidth < 640 ? { top: 60, bottom: 0, left: 0, right: 0 } : innerWidth < 960 ? { top: 170, bottom: 250, left: 0, right: 0 } : { top: 0, bottom: 170, left: 0, right: 360 } }));
 map.addControl(new NavigationControl({ showCompass: false }), "bottom-left");
 const popup = new Popup({ closeButton: false, closeOnClick: true, maxWidth: "16rem" });
 const markers = new Map<string, Marker>();
@@ -103,8 +103,10 @@ function addLayers() {
     "circle-color": ex(["interpolate", ["linear"], ["get", "pct"], 0, danger, 0.2, warn, 0.55, ok]),
     "circle-stroke-color": bg, "circle-stroke-width": 0.5, "circle-opacity": 0.9,
   } });
-  map.addLayer({ id: "flood-halo", type: "circle", source: "flood", paint: { "circle-radius": 24, "circle-color": blue, "circle-opacity": 0.25 } });
-  map.addLayer({ id: "flood", type: "circle", source: "flood", paint: { "circle-radius": 7, "circle-color": blue, "circle-stroke-color": bg, "circle-stroke-width": 2 } });
+  // metres to pixels at Singapore's latitude: 78271.517 * cos(1.3deg) / 2^zoom per pixel (512px tiles)
+  const px = (zoomFactor: number) => ["case", ["has", "m"], ["max", 7, ["/", ["get", "m"], 78247 / zoomFactor]], 7];
+  map.addLayer({ id: "flood-halo", type: "circle", source: "flood", filter: ex(["!", ["has", "m"]]), paint: { "circle-radius": 24, "circle-color": blue, "circle-opacity": 0.25 } });
+  map.addLayer({ id: "flood", type: "circle", source: "flood", paint: { "circle-radius": ex(["interpolate", ["exponential", 2], ["zoom"], 0, px(1), 24, px(16777216)]), "circle-color": blue, "circle-opacity": ex(["case", ["has", "m"], 0.45, 1]), "circle-stroke-color": bg, "circle-stroke-width": 2 } });
 }
 
 const hoverable = ["taxi", "dengue-fill", "carpark", "flood"];
@@ -149,7 +151,7 @@ function buildFeatures(s: Partial<Record<Feed, State>>) {
   }
   const flood: Feature[] = [];
   for (const v of Object.values(s.flood ?? {})) {
-    if (isObj(v) && typeof v.lon === "number" && typeof v.lat === "number") flood.push({ type: "Feature", properties: { desc: String(v.desc ?? "") }, geometry: { type: "Point", coordinates: [v.lon, v.lat] } });
+    if (isObj(v) && typeof v.lon === "number" && typeof v.lat === "number") flood.push({ type: "Feature", properties: { desc: String(v.desc ?? ""), ...(typeof v.r === "number" ? { m: v.r * 1000 } : {}) }, geometry: { type: "Point", coordinates: [v.lon, v.lat] } });
   }
   const carpark = carparkPoints(s.carpark ?? {}, ref).map((c): Feature => ({
     type: "Feature", properties: { id: c.id, addr: c.addr, avail: c.avail, total: c.total, pct: c.total ? c.avail / c.total : 0 }, geometry: { type: "Point", coordinates: [c.lon, c.lat] },

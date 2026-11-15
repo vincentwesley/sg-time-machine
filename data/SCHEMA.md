@@ -22,7 +22,7 @@ State at time T = the keyframe + every delta with `t <= T`, applied in order.
 |---|---|---|
 | `psi` | region (`national`, `north`, `south`, `east`, `west`, `central`) | `{"psi24": n, "src": "<upstream timestamp>"}` |
 | `pm25` | region | `{"pm25": n, "src": "<upstream timestamp>"}` |
-| `flood` | upstream alert id | `{"lon": n, "lat": n, "desc": "...", "src": "..."}` (fields confirmed against the real feed; see docs/DECISIONS.md) |
+| `flood` | upstream alert id | `{"lon": n, "lat": n, "desc": "...", "src": "...", "r": km}` (`r` = alert radius in km, 3 dp, omitted when upstream gives none; archived from 15 Nov 2026 onward) (fields confirmed against the real feed; see docs/DECISIONS.md) |
 | `carpark` | HDB carpark number | `[lotsAvailable, totalLots]` (car lots, type `C`) |
 | `taxi` | 0.01° grid cell `"<latIdx>_<lonIdx>"`, where `latIdx = floor(lat*100)`, `lonIdx = floor(lon*100)` | taxi count in that cell |
 | `dengue` | cluster locality + first case code (upstream name) | `{"cases": n, "geom": <GeoJSON geometry>}` |
@@ -36,7 +36,7 @@ PSI, PM2.5 and flood every 30 minutes; carpark and taxi hourly; dengue every 6 h
 Contains information from the datasets listed in `NOTICE.md`, from the National Environment Agency, PUB, Housing & Development Board and Land Transport Authority, made available under the terms of the [Singapore Open Data Licence version 1.0](https://data.gov.sg/open-data-licence).
 
 ## Corrections after the first real responses (2026-11-15)
-- `flood`: dataset `d_f1404e08587ce555b9ea3f565e2eb9a3` is only the API's OpenAPI document, not alert data. The feed is `https://api-open.data.gov.sg/v2/real-time/api/weather/flood-alerts` (keyless). Each record is a 2-minute poll: `item.readings[]` is empty when there is no flooding (verified live). Per the documented schema, an `Alert` message has `item.identifier`, `readings[].area.circle = [lat, lon, radiusKm]` and `readings[].description`; a `Cancel` message lists the cancelled identifiers in `item.references`. State = alerts in the returned window minus cancelled ones. Populated alerts are not yet verified against live data.
+- `flood`: dataset `d_f1404e08587ce555b9ea3f565e2eb9a3` is only the API's OpenAPI document, not alert data. The feed is `https://api-open.data.gov.sg/v2/real-time/api/weather/flood-alerts` (keyless). Each record is a 2-minute poll: `item.readings[]` is empty when there is no flooding (verified live). Per the documented schema, an `Alert` message has `item.identifier`, `readings[].area.circle = [lat, lon, radiusKm]` (radius archived as `r` from 15 Nov 2026) and `readings[].description`; a `Cancel` message lists the cancelled identifiers in `item.references`. State = alerts in the returned window minus cancelled ones. Populated alerts are not yet verified against live data.
 - `dengue`: upstream has no case code. The id is the trimmed `LOCALITY` (repeats get ` #2`, ` #3`...); `cases` = `CASE_SIZE`; `geom` is the Polygon/MultiPolygon with coordinates rounded to 5 decimals.
 - `psi` / `pm25`: the live v2 response has regions `north`, `south`, `east`, `west`, `central` (no `national`). `src` is the reading hour (`items[].timestamp`).
 
