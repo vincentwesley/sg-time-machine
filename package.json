@@ -1,0 +1,40 @@
+{
+  "name": "sg-time-machine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A growing archive of Singapore's live open-data feeds (dengue, haze, floods, carparks, taxis) with a time-slider map.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Vincent Wesley",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincentwesley/sg-time-machine.git"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "snapshot": "node scripts/snapshot.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.15.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "maplibre-gl": "^6.18.0"
+  },
+  "overrides": {
+    "minimatch": "11.0.4"
+  }
+}

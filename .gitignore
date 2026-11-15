@@ -1,0 +1,18 @@
+# NOTE: data/ is tracked on purpose (it is the archive). The house template ignores it; this project does not.
+node_modules/
+dist/
+site/public/data/
+.env
+.env.*
+!.env.example
+.dev.vars
+*.db
+*.sqlite
+test-results/
+playwright-report/
+coverage/
+*.log
+graphify-out/
+.claude/
+qa-output/
+.playwright-mcp/
