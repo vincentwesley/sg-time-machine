@@ -55,7 +55,8 @@ export function normFlood(raw: unknown): State {
       item.readings.forEach((r: unknown, i: number) => {
         const circle = isObj(r) && isObj(r.area) ? r.area.circle : undefined;
         if (!isObj(r) || !Array.isArray(circle) || !num(circle[0]) || !num(circle[1]) || !inSg(circle[0], circle[1]) || !str(r.description) || !str(rec.datetime)) return;
-        alerts[i ? `${id}#${i}` : id] = { lon: r5(circle[1]), lat: r5(circle[0]), desc: r.description, src: rec.datetime };
+        const rad = circle[2];
+        alerts[i ? `${id}#${i}` : id] = { lon: r5(circle[1]), lat: r5(circle[0]), desc: r.description, src: rec.datetime, ...(num(rad) && rad >= 0 ? { r: Math.round(rad * 1000) / 1000 } : {}) };
       });
     }
   }

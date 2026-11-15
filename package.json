@@ -15,6 +15,11 @@
   },
   "scripts": {
     "snapshot": "node scripts/snapshot.ts",
+    "site:data": "node scripts/build-site-data.ts",
+    "dev": "npm run site:data && vite --config site/vite.config.ts",
+    "build": "npm run site:data && vite build --config site/vite.config.ts",
+    "preview": "vite preview --config site/vite.config.ts",
+    "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",

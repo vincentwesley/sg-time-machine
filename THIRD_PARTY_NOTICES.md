@@ -25,3 +25,10 @@ Tiles from [OpenFreeMap](https://openfreemap.org): "OpenFreeMap © OpenMapTiles 
 | Space Grotesk, Inter, Silkscreen, JetBrains Mono (self-hosted, `OFL.txt` alongside) | SIL OFL 1.1 | Google Fonts / upstream authors |
 | Pixelarticons | MIT | https://github.com/halfmage/pixelarticons |
 | Kenney assets | CC0 1.0 | https://kenney.nl |
+
+## Site (added with the map)
+| Item | Licence | Notes |
+|---|---|---|
+| Vite, Playwright, axe-core (dev only) | MIT / MPL-2.0 | build and test tooling, not shipped |
+| House kit CSS/JS, fonts, `icons/` (play, pause, arrows, sun, moon; Pixelarticons MIT, `site/public/icons/LICENSE`) | MIT / OFL 1.1 | copied into `site/public/` |
+| Logo (`brand/svg`) and `credits/creator.webp` | all rights reserved | see `NOTICE.md`; art by Portus Workstation (@portus_workstation, @wason25_pz) |
