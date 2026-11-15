@@ -30,7 +30,7 @@ State at time T = the keyframe + every delta with `t <= T`, applied in order.
 Numbers are rounded: coordinates to 5 decimals, readings to integers as published.
 
 ## Sampling
-PSI, PM2.5 and flood every 30 minutes; carpark and taxi hourly; dengue every 6 hours. Flood alerts upstream change every 2 minutes, so alerts that start and end between samples are not captured.
+PSI, PM2.5 and flood every 30 minutes; carpark and taxi about hourly, dengue about every 6 hours (GitHub may delay runs). Flood alerts upstream change every 2 minutes, so alerts that start and end between samples are not captured.
 
 ## Licence
 Contains information from the datasets listed in `NOTICE.md`, from the National Environment Agency, PUB, Housing & Development Board and Land Transport Authority, made available under the terms of the [Singapore Open Data Licence version 1.0](https://data.gov.sg/open-data-licence).

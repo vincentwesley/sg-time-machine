@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { append, dayFile, lastState, readLines, sg } from "../scripts/store.ts";
+import { append, dayFile, lastLineTime, lastState, readLines, sg } from "../scripts/store.ts";
 
 let root: string;
 beforeEach(() => { root = mkdtempSync(join(tmpdir(), "sgtm-")); });
@@ -35,6 +35,12 @@ describe("append", () => {
     append(root, "psi", t1, { a: 1 });
     expect(append(root, "psi", at("2026-11-15T16:11:00Z"), { a: 1 })).toBe(true); // 2026-11-16 00:11 SG
     expect(readLines(dayFile(root, "psi", "2026-11-16"))).toEqual([{ t: "2026-11-16T00:11:00+08:00", k: 1, v: { a: 1 } }]);
+  });
+  it("lastLineTime: last line's t, null when none", () => {
+    expect(lastLineTime(root, "psi", t1)).toBeNull();
+    append(root, "psi", t1, { a: 1 });
+    append(root, "psi", at("2026-11-15T05:11:00Z"), { a: 2 });
+    expect(lastLineTime(root, "psi", at("2026-11-16T04:00:00Z"))).toEqual(at("2026-11-15T05:11:00Z"));
   });
   it("lastState: today, else latest previous day within 7 days, else null", () => {
     expect(lastState(root, "psi", t1)).toBeNull();

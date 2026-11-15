@@ -30,6 +30,17 @@ export function lastState(root: string, feed: string, now: Date): State | null {
   return null;
 }
 
+/** Time of the most recent written line within the last 7 days, else null. */
+export function lastLineTime(root: string, feed: string, now: Date): Date | null {
+  for (let i = 0; i <= 7; i++) {
+    const f = dayFile(root, feed, sg(new Date(now.getTime() - i * 86400_000)).date);
+    if (!existsSync(f)) continue;
+    const l = readLines(f).at(-1);
+    if (l) return new Date(l.t);
+  }
+  return null;
+}
+
 /** First write of a day is a keyframe; later writes are deltas, only when something changed. Returns whether written. */
 export function append(root: string, feed: string, now: Date, next: State): boolean {
   const { date, iso } = sg(now);

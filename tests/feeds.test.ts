@@ -64,14 +64,15 @@ describe("normalisers (real fixtures)", () => {
 
 describe("due()", () => {
   const at = (hhmm: string) => new Date(`2026-11-15T${hhmm}:00+08:00`);
-  const due = (name: string, hhmm: string) => feeds.find((f) => f.name === name)!.due(at(hhmm));
+  const ago = (hhmm: string, min: number) => new Date(at(hhmm).getTime() - min * 60_000);
+  const due = (name: string, hhmm: string, lastMin: number | null) => feeds.find((f) => f.name === name)!.due(at(hhmm), lastMin === null ? null : ago(hhmm, lastMin));
   it("psi, pm25, flood every run", () => {
-    for (const n of ["psi", "pm25", "flood"]) expect([due(n, "13:11"), due(n, "13:41")]).toEqual([true, true]);
+    for (const n of ["psi", "pm25", "flood"]) expect([due(n, "13:11", 30), due(n, "13:41", 0)]).toEqual([true, true]);
   });
-  it("carpark and taxi once an hour", () => {
-    for (const n of ["carpark", "taxi"]) expect([due(n, "13:11"), due(n, "13:41")]).toEqual([true, false]);
+  it("carpark and taxi: delayed run still fetches, recent line does not, no line fetches", () => {
+    for (const n of ["carpark", "taxi"]) expect([due(n, "13:35", 70), due(n, "13:41", 20), due(n, "13:11", null)]).toEqual([true, false, true]);
   });
-  it("dengue at hours divisible by 6, first half hour", () => {
-    expect([due("dengue", "12:11"), due("dengue", "12:41"), due("dengue", "13:11"), due("dengue", "00:11")]).toEqual([true, false, false, true]);
+  it("dengue: 06:50 with 6h10m old line, not 07:11 with 20 min old, any hour when > 6h50m old", () => {
+    expect([due("dengue", "06:50", 370), due("dengue", "07:11", 20), due("dengue", "13:11", 411), due("dengue", "13:11", 370), due("dengue", "13:11", null)]).toEqual([true, false, true, false, true]);
   });
 });

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { feeds, type Feed } from "./feeds.ts";
 import { realHttp, type Http } from "./http.ts";
 import { refreshCarparks } from "./ref-carparks.ts";
-import { append, DATA_ROOT, sg } from "./store.ts";
+import { append, DATA_ROOT, lastLineTime, sg } from "./store.ts";
 
 interface Health { ok?: string; error?: string; message?: string }
 type HealthFile = Record<string, Health>;
@@ -28,10 +28,11 @@ export async function run(opts: Options = {}): Promise<{ results: Result[]; exit
   const tasks: Task[] = (opts.feedList ?? feeds).map((f) => ({
     name: f.name,
     poll: f.poll,
-    due: f.due,
+    due: (n) => f.due(n, lastLineTime(root, f.name, n)),
     run: async () => (append(root, f.name, now, f.norm(await f.get(http))) ? "changed" : "unchanged"),
   }));
   // Monthly HDB carpark coordinates refresh (day 1, 03:00-03:29 SG), outside the feed archive.
+  // Clock-windowed on purpose: a delayed run just skips it, and a miss is harmless.
   if (!opts.feedList) {
     tasks.push({
       name: "ref",
