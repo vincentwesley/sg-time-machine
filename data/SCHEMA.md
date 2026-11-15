@@ -39,3 +39,8 @@ Contains information from the datasets listed in `NOTICE.md`, from the National 
 - `flood`: dataset `d_f1404e08587ce555b9ea3f565e2eb9a3` is only the API's OpenAPI document, not alert data. The feed is `https://api-open.data.gov.sg/v2/real-time/api/weather/flood-alerts` (keyless). Each record is a 2-minute poll: `item.readings[]` is empty when there is no flooding (verified live). Per the documented schema, an `Alert` message has `item.identifier`, `readings[].area.circle = [lat, lon, radiusKm]` and `readings[].description`; a `Cancel` message lists the cancelled identifiers in `item.references`. State = alerts in the returned window minus cancelled ones. Populated alerts are not yet verified against live data.
 - `dengue`: upstream has no case code. The id is the trimmed `LOCALITY` (repeats get ` #2`, ` #3`...); `cases` = `CASE_SIZE`; `geom` is the Polygon/MultiPolygon with coordinates rounded to 5 decimals.
 - `psi` / `pm25`: the live v2 response has regions `north`, `south`, `east`, `west`, `central` (no `national`). `src` is the reading hour (`items[].timestamp`).
+
+## Retention
+- Full-resolution day files stay in the working tree for 90 days. Monthly gzip bundles of every feed (`<feed>-YYYY-MM.ndjson.gz`, with `SHA256SUMS`) are attached to the GitHub release `data-YYYY-MM`.
+- After 90 days the `carpark` and `taxi` day files are downsampled: the keyframe stays and carries `"r":"6h"`, and deltas are kept only at the first snapshot at or after 06:00, 12:00 and 18:00 SG time (each diffed against the previous kept state). Other feeds are never downsampled. State at a kept time is identical to the original; between kept times the state is that of the previous kept time.
+- A month above 12 MB raw warns and above 15 MB fails the rollup workflow.

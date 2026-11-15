@@ -17,3 +17,4 @@ All dated 2026-11-15.
 - **Retention and rollup.** History is permanent and growth is bounded by sampling; monthly release assets hold full resolution; the working tree is downsampled after 90 days. About 1 GB is the ceiling, beyond which a per-year data repo is needed (owner decision).
 - **`data/` is tracked** despite the house gitignore template: it is the product.
 - **No keepalive workflow.** Bot data commits keep the repo active, so scheduled workflows are not disabled for inactivity.
+- **Monthly rollup (2026-11-15).** `scripts/rollup.ts` (zero-dep) gzips the previous month per feed to a release `data-YYYY-MM` and downsamples carpark/taxi day files older than 90 days to 6-hourly (keyframe marked `"r":"6h"`). It shares the `snapshot` concurrency group so the two never push at once. The size gate is per month across feeds (warn 12 MB, fail 15 MB).
