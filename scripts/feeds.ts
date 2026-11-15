@@ -6,7 +6,8 @@ export interface Feed {
   name: string;
   /** Uses poll-download (stricter rate limit: needs a longer gap). */
   poll?: boolean;
-  due(now: Date): boolean;
+  /** `last` = time of the feed's most recent written line (null if none in 7 days). */
+  due(now: Date, last: Date | null): boolean;
   get(http: Http): Promise<unknown>;
   norm(raw: unknown): State;
 }
@@ -112,8 +113,12 @@ export function normDengue(raw: unknown): State {
 }
 
 const RT = "https://api-open.data.gov.sg/v2/real-time/api";
-const everyRun = () => true;
-const hourly = (now: Date) => sg(now).minute < 30;
+const MIN = 60_000;
+// Interval-since-last-line, not clock windows: GitHub cron runs are often delayed or dropped.
+const every = (ms: number) => (now: Date, last: Date | null) => !last || now.getTime() - last.getTime() >= ms;
+const everyRun = every(0);
+const hourly = every(50 * MIN);
+const dengueGap = every(350 * MIN);
 
 export const feeds: Feed[] = [
   { name: "psi", due: everyRun, get: (h) => getJson(`${RT}/psi`, h), norm: normPsi },
@@ -124,7 +129,8 @@ export const feeds: Feed[] = [
   {
     name: "dengue",
     poll: true,
-    due: (now) => sg(now).hour % 6 === 0 && sg(now).minute < 30,
+    // Unchanged runs write no line, so gate on the 6 h SG hour to avoid a download every run once stale.
+    due: (now, last) => dengueGap(now, last) && (!last || sg(now).hour % 6 === 0 || now.getTime() - last.getTime() >= 410 * MIN),
     get: async (h) => JSON.parse(await pollDownload("d_dbfabf16158d1b0e1c420627c0819168", h)),
     norm: normDengue,
   },

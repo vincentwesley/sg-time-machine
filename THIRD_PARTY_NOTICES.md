@@ -6,7 +6,7 @@ All datasets are published by Singapore government agencies on data.gov.sg under
 | Dataset | Agency | Id / source |
 |---|---|---|
 | PSI, PM2.5 (Real-time API) | NEA | data.gov.sg real-time API |
-| Flood Alerts across Singapore | PUB | d_f1404e08587ce555b9ea3f565e2eb9a3 |
+| Flood Alerts across Singapore | PUB | real-time API `v2/real-time/api/weather/flood-alerts` |
 | Carpark Availability | HDB | data.gov.sg (v1 real-time) |
 | Taxi Availability | LTA | data.gov.sg (v1 real-time) |
 | Dengue Clusters GEOJSON | NEA | d_dbfabf16158d1b0e1c420627c0819168 |

@@ -22,7 +22,7 @@ A growing archive of Singapore's live open-data feeds (air quality, flood alerts
 
 ## Download the data
 - Day files: `data/<feed>/YYYY/MM/DD.ndjson` in this repository.
-- Monthly GitHub Releases attach the full-resolution `.ndjson.gz` files.
+- Monthly GitHub Releases (`data-YYYY-MM`, the first one on 2 December 2026) attach each month's full-resolution `.ndjson.gz` files with SHA256 sums. Carpark and taxi files older than 90 days are thinned to 6-hourly in `data/`; the releases keep every sample.
 - Line format (keyframes and deltas): [`data/SCHEMA.md`](data/SCHEMA.md).
 
 ## Develop
@@ -30,6 +30,7 @@ A growing archive of Singapore's live open-data feeds (air quality, flood alerts
 npm ci --ignore-scripts
 npm run check        # typecheck + lint + unit
 npm run build
+npx playwright install chromium   # once, for e2e
 npm run test:e2e
 npm run snapshot     # makes ~6 real network calls
 ```
