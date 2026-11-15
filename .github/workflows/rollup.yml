@@ -1,0 +1,77 @@
+name: Rollup
+
+on:
+  schedule:
+    - cron: "37 19 1 * *"
+  workflow_dispatch:
+    inputs:
+      month:
+        description: "Month to roll up, YYYY-MM (default: previous SG month)"
+        type: string
+        required: false
+
+permissions: {}
+
+concurrency:
+  # Own group: sharing "snapshot" would let a queued snapshot run cancel a pending rollup.
+  group: rollup
+  cancel-in-progress: false
+
+jobs:
+  rollup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      # Zero dependencies: Node runs the TypeScript directly, so no npm ci.
+      # The script validates the month before anything else happens.
+      - name: Rollup
+        env:
+          MONTH: ${{ inputs.month }}
+        run: |
+          M="${MONTH:-$(TZ=Asia/Singapore date -d 'last month' +%Y-%m)}"
+          node scripts/rollup.ts --month "$M" --out out
+          echo "M=$M" >> "$GITHUB_ENV"
+
+      - name: Release full-resolution files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "data-$M" >/dev/null 2>&1; then
+            echo "Release data-$M exists; skipping."
+            exit 0
+          fi
+          gh release create "data-$M" out/* --title "Data $M" \
+            --notes "Full-resolution day files for $M. Contains information from the datasets listed in NOTICE.md, made available under the Singapore Open Data Licence version 1.0 (https://data.gov.sg/open-data-licence). Format: data/SCHEMA.md in this repository."
+
+      - name: Commit and push
+        run: |
+          if [ -z "$(git status --porcelain data)" ]; then
+            echo "No data changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "data: rollup $M"
+          for attempt in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push attempt $attempt failed"
+            sleep 5
+          done
+          exit 1
+
+      - name: Size gate
+        if: env.SIZE_LEVEL == 'fail'
+        run: |
+          echo "::error::A month's raw data is over 15 MB. Review sampling rates (see docs/DECISIONS.md)."
+          exit 1
