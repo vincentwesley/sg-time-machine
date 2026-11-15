@@ -11,7 +11,7 @@ export default defineConfig({
   testMatch: "*.spec.ts",
   outputDir: join(root, "test-results"),
   timeout: 45_000,
-  fullyParallel: true,
+  workers: 1, // MapLibre on SwiftShader is CPU-heavy; parallel workers time out
   reporter: "list",
   use: { baseURL: "http://localhost:4173", browserName: "chromium", launchOptions: { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] } },
   webServer: {
