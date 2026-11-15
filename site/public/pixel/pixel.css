@@ -1,0 +1,103 @@
+/* House pixel kit (opt-in, hs- prefixed). Sprites: Kenney 1-Bit Pack / Pixel UI Pack / Cursor Pixel Pack (CC0), see ../THIRD_PARTY_NOTICES.md.
+   Needs tokens.css. Sprite URLs are relative to this file. Monochrome sprites are masks tinted by --accent, so they follow the theme. */
+
+.hs-pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* One monochrome sprite recoloured per theme. Set --hs-sprite / --hs-sprite-pos / --hs-sprite-size in a class of your own. */
+.hs-sprite-mask {
+  display: inline-block;
+  inline-size: 16px;
+  block-size: 16px;
+  background: var(--accent);
+  -webkit-mask: var(--hs-sprite, url("icons.png")) var(--hs-sprite-pos, 0 0) / var(--hs-sprite-size, auto) no-repeat;
+  mask: var(--hs-sprite, url("icons.png")) var(--hs-sprite-pos, 0 0) / var(--hs-sprite-size, auto) no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Divider motif: a 48px deco tile (use --1..--3 for the other three motifs), centred, tinted. */
+.hs-divider-motif {
+  --hs-divider-img: url("deco.png");
+  display: block;
+  inline-size: 48px;
+  block-size: 48px;
+  margin-inline: auto;
+  background: var(--accent);
+  -webkit-mask: var(--hs-divider-img) calc(var(--m, 0) * -48px) 0 / 192px 48px no-repeat;
+  mask: var(--hs-divider-img) calc(var(--m, 0) * -48px) 0 / 192px 48px no-repeat;
+  image-rendering: pixelated;
+}
+.hs-divider-motif--1 { --m: 1; }
+.hs-divider-motif--2 { --m: 2; }
+.hs-divider-motif--3 { --m: 3; }
+
+/* Frame: pure box-shadow pixel frame (2px outer ring, hairline 4px inside it, solid square corner studs). No images, works everywhere.
+   Set --hs-frame-c to recolour (default --border-strong). Put on a card-like box; it paints its own background under the studs. */
+.hs-frame {
+  --_c: var(--hs-frame-c, var(--border-strong));
+  --_bg: var(--hs-frame-bg, var(--bg-elev));
+  box-shadow: 0 0 0 2px var(--_c), inset 0 0 0 4px var(--_bg), inset 0 0 0 6px color-mix(in srgb, var(--_c) 85%, transparent);
+  background:
+    linear-gradient(var(--_c) 0 0) 0 0 / 12px 12px no-repeat, linear-gradient(var(--_c) 0 0) 100% 0 / 12px 12px no-repeat,
+    linear-gradient(var(--_c) 0 0) 0 100% / 12px 12px no-repeat, linear-gradient(var(--_c) 0 0) 100% 100% / 12px 12px no-repeat,
+    var(--_bg);
+}
+
+/* Sprite-sheet grid helper. Sheet = a PNG of square cells, drawn at --scale (use pixelated art).
+     --cell  source cell size, a length (default 16px)       --scale  unitless integer zoom (default 2)
+     --g     grid columns in the sheet (default 1)           --rows   grid rows in the sheet (default 1)
+     --c     0-based column of the wanted cell               --r      0-based row of the wanted cell
+   Sheet URL goes in --hs-sprite (relative to this file). Painted as a mask, so it takes --tone (default --accent) and follows the theme.
+   Example (deco.png: 16px cells, 12 columns x 3 rows): .deco { --hs-sprite: url("deco.png"); --g: 12; --rows: 3; } .heart { --c: 1; --r: 0; }
+   <span class="hs-sprite deco heart" aria-hidden="true"></span> */
+.hs-sprite {
+  --_w: calc(var(--cell, 16px) * var(--scale, 2));
+  display: inline-block;
+  inline-size: var(--_w);
+  block-size: var(--_w);
+  background: var(--tone, var(--accent));
+  -webkit-mask: var(--hs-sprite, url("icons.png")) calc(var(--c, 0) * var(--_w) * -1) calc(var(--r, 0) * var(--_w) * -1) / calc(var(--g, 1) * var(--_w)) calc(var(--rows, 1) * var(--_w)) no-repeat;
+  mask: var(--hs-sprite, url("icons.png")) calc(var(--c, 0) * var(--_w) * -1) calc(var(--r, 0) * var(--_w) * -1) / calc(var(--g, 1) * var(--_w)) calc(var(--rows, 1) * var(--_w)) no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Stepped (2-frame) bob and wiggle for pixel art, only when motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  .hs-bob { animation: hs-bob 2.4s steps(2, jump-none) infinite; }
+  .hs-wiggle:is(:hover, :focus-visible) { animation: hs-wiggle 0.4s steps(4, end); }
+}
+@keyframes hs-bob { 50% { translate: 0 -3px; } }
+@keyframes hs-wiggle { 25% { rotate: -10deg; } 75% { rotate: 10deg; } }
+
+/* Footer critters: a 2x strip of sprites walking along the top edge of a position:relative footer. Static unless motion is allowed. */
+.hs-critters {
+  position: absolute;
+  inset-block-start: -31px;
+  inset-inline-end: 1rem;
+  inline-size: 192px;
+  block-size: 32px;
+  background: var(--fg);
+  opacity: 0.8;
+  pointer-events: none;
+  -webkit-mask: url("deco.png") 0 -32px / 384px 96px no-repeat;
+  mask: url("deco.png") 0 -32px / 384px 96px no-repeat;
+  image-rendering: pixelated;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hs-critters { animation: hs-walk calc(var(--dur-open, 240ms) * 40) steps(24, jump-none) infinite alternate; }
+}
+@keyframes hs-walk { to { transform: translateX(-12rem); } }
+
+/* Icons from ../icons: set --icon in a class (CSP forbids inline style), e.g. .i-menu { --icon: url("../icons/menu.svg"); } */
+.hs-icon {
+  display: inline-block;
+  inline-size: 1.5em;
+  block-size: 1.5em;
+  vertical-align: middle;
+  background: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+/* Opt-in pixel cursors (put on html/body or a container). */
+.hs-cursor { cursor: url("cursors/pointer.png") 0 0, auto; }
+.hs-cursor :is(a, button, [role="button"], summary) { cursor: url("cursors/hand.png") 6 0, pointer; }

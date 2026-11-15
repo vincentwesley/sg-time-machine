@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://tiles.openfreemap.org; connect-src 'self' https://tiles.openfreemap.org; font-src 'self' https://tiles.openfreemap.org; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#11150e">
+<title>SG Time Machine</title>
+<meta name="description" content="Scrub back through Singapore's open data: dengue clusters, haze, flood alerts, HDB carparks and taxis, saved every 30 minutes.">
+<script src="/js/theme-init.js"></script>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/components.css">
+<link rel="stylesheet" href="/pixel/pixel.css">
+<link rel="stylesheet" href="/credits/credits.css">
+<link rel="stylesheet" href="/src/style.css">
+<script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+<a class="hs-skip" href="#main">Skip to the map</a>
+<header class="top">
+  <a class="top__brand" href="./" aria-label="SG Time Machine, home">
+    <img class="hs-brand-dark" src="/brand/svg/name-b.svg" alt="Vin's Atelier" width="988" height="470">
+    <img class="hs-brand-light" src="/brand/svg/name-a.svg" alt="Vin's Atelier" width="988" height="470">
+  </a>
+  <div class="top__title">
+    <h1>SG Time Machine</h1>
+    <p id="since" class="top__since">Loading archive&hellip;</p>
+  </div>
+  <a class="hs-btn hs-btn--ghost hs-btn--sm top__about" href="#about">About &amp; data</a>
+  <button id="theme-toggle" class="hs-btn hs-btn--secondary hs-btn--sm top__theme" type="button" aria-pressed="false" aria-label="Switch theme">
+    <span class="hs-icon i-sun" aria-hidden="true"></span><span class="hs-icon i-moon" aria-hidden="true"></span>
+  </button>
+</header>
+
+<main id="main">
+  <section class="stage" aria-label="Map and timeline">
+    <div id="map" class="map" aria-label="Map of Singapore with archived open data"></div>
+
+    <div class="layers" role="group" aria-label="Map layers" id="layers"></div>
+
+    <div id="empty" class="empty hs-card" role="status" hidden>
+      <h2>Nothing archived yet</h2>
+      <p>The archive has just started. A scheduled job saves the feeds every 30 minutes, so the first snapshot lands within 30 minutes of the next run. Come back then and the time slider will fill in.</p>
+    </div>
+
+    <div class="dock">
+    <aside class="panel hs-card" aria-label="Readings at the selected time">
+      <button id="panel-toggle" class="panel__toggle" type="button" aria-expanded="true" aria-controls="panel-body">
+        <span>Readings</span><span class="panel__chev" aria-hidden="true"></span>
+      </button>
+      <div id="panel-body" class="panel__body" tabindex="0"></div>
+    </aside>
+
+    <form class="timeline hs-card" id="timeline" aria-label="Time travel">
+      <div class="tl__row">
+        <label class="tl__date"><span class="sr-only">Date</span>
+          <input id="date" class="hs-input" type="date" required>
+        </label>
+        <output id="time-label" class="tl__time" for="date slider">--:--</output>
+        <div class="tl__btns">
+          <button id="prev" class="hs-btn hs-btn--secondary tl__btn" type="button" aria-label="Previous snapshot"><span class="hs-icon i-left" aria-hidden="true"></span></button>
+          <button id="play" class="hs-btn tl__btn" type="button" aria-label="Play"><span class="hs-icon i-play" aria-hidden="true"></span></button>
+          <button id="next" class="hs-btn hs-btn--secondary tl__btn" type="button" aria-label="Next snapshot"><span class="hs-icon i-right" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <label class="tl__slider"><span class="sr-only">Snapshot time</span>
+        <input id="slider" type="range" min="0" max="0" value="0" step="1">
+      </label>
+      <p id="tl-note" class="tl__note" role="status"></p>
+    </form>
+    </div>
+  </section>
+
+  <section id="about" class="about" aria-labelledby="h-about">
+    <div class="about__inner">
+      <h2 id="h-about">About &amp; download</h2>
+      <p class="about__lead">SG Time Machine saves Singapore's live open data on a schedule and lets you scrub back through it. Nothing here is a forecast or an official record. It is a log of what the public feeds said when we asked.</p>
+
+      <h3>What is archived, and how often</h3>
+      <div class="table-wrap">
+      <table class="about__table">
+        <caption class="sr-only">Archived feeds and sampling</caption>
+        <thead><tr><th scope="col">Feed</th><th scope="col">Source</th><th scope="col">Sampled</th><th scope="col">What is stored</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">PSI</th><td>NEA</td><td>every 30 min</td><td>24-hour PSI for 5 regions</td></tr>
+          <tr><th scope="row">PM2.5</th><td>NEA</td><td>every 30 min</td><td>1-hour PM2.5 for 5 regions</td></tr>
+          <tr><th scope="row">Flood alerts</th><td>PUB</td><td>every 30 min</td><td>Active alerts with location and description</td></tr>
+          <tr><th scope="row">Carparks</th><td>HDB</td><td>hourly</td><td>Car lots free and total per carpark</td></tr>
+          <tr><th scope="row">Taxis</th><td>LTA</td><td>hourly</td><td>Counts per 0.01&deg; grid square, not vehicles</td></tr>
+          <tr><th scope="row">Dengue clusters</th><td>NEA</td><td>every 6 h</td><td>Cluster outlines and case counts</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Limits</h3>
+      <ul>
+        <li>The archive starts on its first run. There is no earlier history.</li>
+        <li>Scheduled runs can be late or skipped, so gaps happen. A feed with nothing for a day says so.</li>
+        <li>Air-quality readings are drawn at the centre of each NEA region, not at a sensor.</li>
+        <li>Flood alerts can start and end between samples, and the alert radius is not archived, so each is drawn as a fixed-size marker.</li>
+        <li>Carpark and taxi data come from endpoints whose long-term status is undocumented.</li>
+      </ul>
+
+      <h3>Download the data</h3>
+      <ul class="about__links">
+        <li><a class="hs-chip" href="https://github.com/vincentwesley/sg-time-machine/tree/main/data" target="_blank" rel="noopener noreferrer">Day files on GitHub<span class="sr-only"> (opens in a new tab)</span></a></li>
+        <li><a class="hs-chip" href="https://github.com/vincentwesley/sg-time-machine/releases" target="_blank" rel="noopener noreferrer">Monthly releases<span class="sr-only"> (opens in a new tab)</span></a></li>
+        <li><a class="hs-chip" href="https://github.com/vincentwesley/sg-time-machine/blob/main/data/SCHEMA.md" target="_blank" rel="noopener noreferrer">File format (SCHEMA.md)<span class="sr-only"> (opens in a new tab)</span></a></li>
+      </ul>
+
+      <h3>Data sources and licence</h3>
+      <p>Contains information from the following datasets, made available under the terms of the <a href="https://data.gov.sg/open-data-licence" target="_blank" rel="noopener noreferrer">Singapore Open Data Licence version 1.0</a>:</p>
+      <ul>
+        <li>PSI and PM2.5 (Real-time API), National Environment Agency.</li>
+        <li>Flood Alerts across Singapore, PUB, Singapore's National Water Agency.</li>
+        <li>Carpark Availability and HDB Carpark Information, Housing &amp; Development Board.</li>
+        <li>Taxi Availability, Land Transport Authority.</li>
+        <li>Dengue Clusters GEOJSON, National Environment Agency.</li>
+      </ul>
+      <p>Basemap: <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>, OpenMapTiles data from &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>.</p>
+      <p class="about__fine">This project is not affiliated with or endorsed by any Singapore government agency. Data is provided as is, without warranty of accuracy or completeness. No analytics, no cookies. Your theme choice is kept in your browser's local storage.</p>
+    </div>
+
+    <div class="about__credits">
+<section class="section span-12 creator" aria-labelledby="h-creator">
+  <div class="card">
+    <div class="card__head"><h2 id="h-creator">Credits</h2></div>
+    <div class="card__body creator__body">
+      <div class="creator__fx" aria-hidden="true">
+        <i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i><i>></i>
+        <b class="spark">></b><b class="spark">></b><b class="spark spark--sm">></b><b class="spark spark--sm">></b>
+      </div>
+      <div class="creator__art" aria-hidden="true">
+        <img src="/credits/creator.webp" alt="" width="456" height="613" loading="lazy" decoding="async">
+      </div>
+      <div class="creator__text">
+        <p class="creator__eyebrow">Made by</p>
+        <p class="creator__name"><span>Vin</span></p>
+        <p class="creator__blurb">SG Time Machine was designed and built by Vin. Find more of my work on my website, or say hi on Instagram and X.</p>
+        <ul class="creator__links">
+          <li><a href="https://vwesley.dev" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
+            <span>vwesley.dev</span></a></li>
+          <li><a href="https://www.instagram.com/vinnql/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" class="fill"/></svg>
+            <span>@vinnql</span><span class="sr-only"> on Instagram</span></a></li>
+          <li><a href="https://x.com/Vin_Koe" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="fill" d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8L17.8 3zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5z"/></svg>
+            <span>@Vin_Koe</span><span class="sr-only"> on X (Twitter)</span></a></li>
+        </ul>
+        <div class="creator__brand">
+          <p class="creator__logo">
+            <img class="hs-brand-dark" src="/brand/svg/name-b.svg" alt="Vin&#39;s Atelier" width="988" height="470" loading="lazy" decoding="async">
+            <img class="hs-brand-light" src="/brand/svg/name-a.svg" alt="Vin&#39;s Atelier" width="988" height="470" loading="lazy" decoding="async">
+          </p>
+          <p class="creator__eyebrow">Logo by</p>
+          <ul class="creator__links creator__links--credit">
+            <li><a href="https://www.instagram.com/portus_workstation/" target="_blank" rel="noopener noreferrer"><span>@portus_workstation</span><span class="sr-only"> on Instagram (logo artist)</span></a></li>
+            <li><a href="https://www.instagram.com/wason25_pz/" target="_blank" rel="noopener noreferrer"><span>@wason25_pz</span><span class="sr-only"> on Instagram (logo artist, main account)</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+    </div>
+  </section>
+</main>
+</body>
+</html>
