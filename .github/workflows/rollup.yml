@@ -13,7 +13,8 @@ on:
 permissions: {}
 
 concurrency:
-  group: snapshot
+  # Own group: sharing "snapshot" would let a queued snapshot run cancel a pending rollup.
+  group: rollup
   cancel-in-progress: false
 
 jobs:
@@ -67,4 +68,10 @@ jobs:
             echo "push attempt $attempt failed"
             sleep 5
           done
+          exit 1
+
+      - name: Size gate
+        if: env.SIZE_LEVEL == 'fail'
+        run: |
+          echo "::error::A month's raw data is over 15 MB. Review sampling rates (see docs/DECISIONS.md)."
           exit 1

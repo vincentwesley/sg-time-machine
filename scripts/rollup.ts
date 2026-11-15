@@ -124,7 +124,11 @@ function main(argv: string[]) {
   ].join("\n");
   console.log(text);
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, text + "\n");
-  if (size.level === "fail") process.exitCode = 1;
+  // In CI the size gate fails a final step, so the release and commit still happen first.
+  if (size.level === "fail") {
+    if (process.env.GITHUB_ENV) appendFileSync(process.env.GITHUB_ENV, "SIZE_LEVEL=fail\n");
+    else process.exitCode = 1;
+  }
 }
 
 if (import.meta.main) main(process.argv.slice(2));
