@@ -2,8 +2,8 @@ name: Snapshot
 
 on:
   schedule:
-    # :11 and :41 avoid the top-of-hour rush when GitHub drops scheduled runs.
-    - cron: "11,41 * * * *"
+    # :07 and :37 avoid the top-of-hour rush when GitHub drops scheduled runs.
+    - cron: "7,37 * * * *"
   workflow_dispatch:
     inputs:
       all:
