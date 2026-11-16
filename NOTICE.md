@@ -19,4 +19,4 @@ This project is not affiliated with or endorsed by any Singapore government agen
 ## Logo and credits art
 The commissioned logo and creator art shown in the credits card are all rights reserved. They are not covered by the MIT licence.
 
-The embedded Vin's Atelier logo (credits sign-off) is all rights reserved by Vin's Atelier, designed by Portus Workstation. Code copyright: Vincent Wesley (Vin), Vin's Atelier.
+The embedded Vin's Atelier logo (credits sign-off) is all rights reserved by Vin's Atelier, designed by Portus Workstation. Code copyright: Vincent Wesley (Vin's Atelier).
