@@ -45,6 +45,9 @@ Needs Node 24 (`.nvmrc`).
 ## Attribution
 Data: contains information from the datasets listed in [`NOTICE.md`](NOTICE.md), made available under the [Singapore Open Data Licence v1.0](https://data.gov.sg/open-data-licence). Not affiliated with or endorsed by any Singapore government agency. Other credits: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
+## Credits
+Designed and built by Vin, Vin's Atelier (https://vwesley.dev). Logo by @portus_workstation / @wason25_pz (Instagram); the logo is all rights reserved (see `NOTICE.md`), not covered by the MIT licence.
+
 ## Removal requests
 See [`SECURITY.md`](SECURITY.md).
 

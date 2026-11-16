@@ -2,6 +2,8 @@ import { Map as MlMap, Marker, NavigationControl, Popup, setWorkerUrl } from "ma
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "./logo.css";
+import "./logo-resize.ts";
 import {
   BAND_NAMES, FEEDS, PM25_NAMES, REGIONS, carparkPoints, counts, formatHash, hm, nearest, parseHash, parseNdjson, pm25Band, psiBand,
   regionList, regionValue, secOfDay, series, stateAt, unionTimes,
