@@ -19,3 +19,4 @@ Branch `vin-atelier-brand`: draggable Vin's Atelier logo + credits sign-off adde
 1. Confirm a `schedule`-event snapshot run has succeeded.
 2. First monthly release on 2026-12-02 (watch rollup.yml).
 3. Report only the outcome and any owner actions.
+- 2026-11-17: logo spec waits for the --logo-x transition before measuring (15s polls).
