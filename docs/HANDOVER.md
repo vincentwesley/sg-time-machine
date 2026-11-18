@@ -3,7 +3,7 @@
 Live: https://vincentwesley.github.io/sg-time-machine/ · Repo: https://github.com/vincentwesley/sg-time-machine (public)
 
 ## Resume
-1. Pull `main` first. The snapshot bot commits to it every 30 minutes.
+1. Pull `main` first. The snapshot bot commits to it whenever GitHub fires the cron (a few times a day).
 2. Read `README.md`, `data/SCHEMA.md`, `docs/DECISIONS.md`, `docs/NEEDS-VIN.md`.
 3. Never rewrite, force-push or hand-edit anything under `data/`; it is the archive and can't be recreated.
 4. Work on a branch, open a PR, merge when CI is green. Bot pushes don't trigger CI or Pages; Pages redeploys every 3 hours on its own cron.
@@ -41,7 +41,7 @@ gh run list --workflow snapshot.yml --event schedule
 - Pages deploys from Actions; the deploy succeeded after the Pages action major bumps.
 
 ## Not done & why
-- **No cron-triggered snapshot has run yet.** This is the one open done-criterion. Every `schedule` slot from 06:41 to 13:03 UTC on 2026-11-15 was skipped by GitHub, and the Pages cron didn't fire either. The workflows are `active`, Actions are enabled, the YAML is valid, manual dispatch works, and githubstatus showed no incident. Already tried: touching the workflow file, disabling and re-enabling the workflow, and changing the cron to `7,37 * * * *`. Next session, first check `gh run list --workflow snapshot.yml --event schedule`. If it's still empty, see NEEDS-VIN.
+- **Cron fires, but throttled (diagnosed 2026-11-18).** Schedules do run: 9 green `schedule` snapshot runs since 2026-11-15 19:04 UTC, with gaps of about 4-16 h instead of 30 min (latest 2026-11-18 03:39 UTC = 11:39 SGT; the Pages cron also fires, last 02:55 UTC). The workflow is correct (default branch, valid odd-minute cron, no `if:`, active). GitHub treats `schedule` as best-effort and drops most slots on new, low-activity repos; nothing in the YAML can force it. Next scheduled run is unpredictable, typically 6-12 h after the last (about 10:00-16:00 UTC, 18:00-24:00 SGT on 2026-11-18). For denser data, dispatch manually or use an external pinger (see NEEDS-VIN).
 - Flood alerts with real readings haven't been seen live yet (no flooding since the start). The parser follows the documented schema and is tested on a synthetic fixture only.
 - The first monthly release (`data-2026-11`) will come from rollup.yml on 2026-12-02; that workflow has only been tested locally.
 - Repo-size ceiling (~1 GB, years away) needs an owner decision when it gets close.
