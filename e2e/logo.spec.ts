@@ -149,11 +149,11 @@ test.describe("desktop", () => {
     expect(r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(" ")}`)).toEqual([]);
   });
 
-  test("the header is unchanged: own brand present, no logo inside it", async ({ page }) => {
+  test("the header is unchanged: own mark present, no studio logo inside it", async ({ page }) => {
     await page.goto(URL);
     await expect(page.locator("header.top h1")).toBeVisible();
-    await expect(page.locator("header.top a.top__brand img.hs-brand-dark")).toHaveAttribute("src", /name-b\.svg$/);
-    await expect(page.locator("header.top a.top__brand img.hs-brand-light")).toHaveAttribute("src", /name-a\.svg$/);
+    await expect(page.locator("header.top a.top__brand img")).toHaveAttribute("src", /favicon\.svg$/);
+    await expect(page.locator("header.top img[src*='/brand/']")).toHaveCount(0);
     await expect(page.locator("header.top .brand-logo")).toHaveCount(0);
     await expect(page.locator("header.top [data-logo-link]")).toHaveCount(0);
   });
