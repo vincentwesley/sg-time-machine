@@ -13,7 +13,7 @@ Branch, PR, merge on green CI. Rules in `CLAUDE.md`. Checks: `npm run check`, `n
 ## Current state
 Fetcher, site and rollup are live. The archive began 2026-11-15 14:01 SGT.
 
-Branch `vin-atelier-brand`: draggable Vin's Atelier logo + credits sign-off added (unmerged, not pushed).
+Branch `vin-atelier-brand`: draggable Vin's Atelier logo + credits sign-off added (unmerged; on origin as `origin/vin-atelier-brand`).
 
 ## Known gaps / ideas
 1. Confirm a `schedule`-event snapshot run has succeeded.
